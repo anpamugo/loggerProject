@@ -1,12 +1,10 @@
 package com.log.refactor.app.models.dao;
 
-import java.util.List;
+import org.springframework.data.repository.CrudRepository;
 
 import com.log.refactor.app.models.entity.Log;
 
-public interface ILogDao {
+
+public interface ILogDao extends CrudRepository<Log, Long>{
 	
-	public List<Log> findAll();
-	
-	public void save(Log log);
 }
