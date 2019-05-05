@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+	<header th:replace="layout/layout :: header"></header>
+	<div class="container py-4">
+		<div class="card bg-light">		
+			<div class="card-header" th:text="${title}"></div>			
+			<div class="card-body">
+				<h4 class="card-title">
+					<a th:href="@{/form}" class="btn btn-primary btn-xs">Create a Log Register</a>
+				</h4>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>id</th>
+							<th>Message</th>
+							<th>idLevel</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="logReg: ${logList}">
+							<td th:text="${logReg.id}"></td>
+							<td th:text="${logReg.message}"></td>
+							<td th:text="${logReg.idLevel}"></td>
+						</tr>
+					</tbody>
+		
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+
+<footer th:replace="layout/layout :: footer"></footer>
+
+</html>

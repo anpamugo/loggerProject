@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/layout :: head"></head>
+
+<body>
+
+	<header th:replace="layout/layout :: header"></header>
+
+	<div class="container py-4">
+		<div class="card bg-dark text-white">
+			<div class="card-header" th:text="${title}"></div>
+			<div class="card-body">
+
+				<div th:object="${logForm}" th:remove="tag">
+					<ul th:if="${#fields.hasErrors('*')}" class="alert alert-danger"
+						role="alert">
+						<li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+					</ul>
+				</div>
+				<form th:action="@{/form}" th:object="${logForm}" method="post">
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Message</label>
+						<div class="col-sm-6">
+							<input type="text" th:field="*{message}" class="form-control" th:errorclass="'form-control alert-danger'" /> 
+							<small class="form-text text-danger" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Message Type</label>
+						<div class="col-sm-6">
+							<select th:field="*{messageType}">
+							   <option th:each="msgText : ${T(com.log.refactor.app.util.MessageType).values()}" th:value="${msgText}" th:text="${msgText}"></option>
+							</select>  
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label">Logs to Write</label>
+						<div class="col-sm-4">
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">Console</label> 
+								<input type="checkbox"  th:field="*{logConsole}" th:value="*{logConsole}" />
+							</div>
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">File</label> 
+								<input type="checkbox" th:field="*{logFile}" th:value="*{logFile}" />
+							</div>
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">Database</label> 
+								<input type="checkbox" th:field="*{logDatabase}" th:value="*{logDatabase}" />
+							</div>
+						</div>					
+						<label class="col-sm-2 col-form-label">Log Level</label>
+						<div class="col-sm-4">
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">Error</label> 
+								<input type="checkbox" th:field="*{logError}" th:value="*{logError}" />
+							</div>
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">Warning</label> 
+								<input type="checkbox" th:field="*{logWarning}" th:value="*{logWarning}" />
+							</div>
+							<div class="col-sm-12">
+								<label class="col-sm-4 col-form-label">Message</label> 
+								<input type="checkbox" th:field="*{logMessage}" th:value="*{logMessage}" />
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-sm-6">
+							<input type="submit" value="Write Log Register"
+								class="btn btn-secondary" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+
+<footer th:replace="layout/layout :: footer"></footer>
+
+</html>
