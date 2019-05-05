@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.jayway.jsonpath.ReadContext;
 import com.log.refactor.app.decorator.Loggeable;
 import com.log.refactor.app.decorator.logger.LogConsole;
 import com.log.refactor.app.decorator.logger.LogDataBase;

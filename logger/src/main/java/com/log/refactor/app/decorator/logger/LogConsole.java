@@ -10,7 +10,6 @@ import java.util.logging.StreamHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 public class LogConsole extends LogDecorator {
 
