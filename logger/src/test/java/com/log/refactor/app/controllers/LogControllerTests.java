@@ -3,6 +3,7 @@ package com.log.refactor.app.controllers;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.jayway.jsonpath.ReadContext;
 import com.log.refactor.app.decorator.Loggeable;
 import com.log.refactor.app.decorator.logger.LogConsole;
 import com.log.refactor.app.decorator.logger.LogDataBase;
@@ -40,7 +43,8 @@ public class LogControllerTests {
 	
 	private final String fileName = "C:\\temp\\pr\\logFileRefactor.txt";
 	private OutputStream logConsoleOut;
-	private StreamHandler testLogHandler;
+	private StreamHandler testLogConsoleHandler;
+	private Logger loggerConsoleTest = Logger.getLogger("log.refactor");
 	
     @Test
     public void testOnlyOneLogWriter() throws Exception {
@@ -52,6 +56,7 @@ public class LogControllerTests {
         Loggeable.configureMessageLevel(logErrorOn, logWarningOn, logMessageOn);
         Files.deleteIfExists(Paths.get(fileName));
         logDao.deleteAll();
+        //configureConsole();
 
         //Message
         MessageType messageType = MessageType.MESSAGE;
@@ -80,8 +85,9 @@ public class LogControllerTests {
         loggeable = new LogFile(loggeable);
 
         Loggeable.configureMessageLevel(logErrorOn, logWarningOn, logMessageOn);
-        Files.deleteIfExists(Paths.get(fileName));
+        Files.deleteIfExists(Paths.get(fileName));        
         logDao.deleteAll();
+        //configureConsole();
         MessageType messageType = MessageType.MESSAGE;
         boolean enableLogToTest = logMessageOn;
         writeLog(loggeable, messageType, enableLogToTest);
@@ -114,8 +120,9 @@ public class LogControllerTests {
         loggeable = new LogFile(loggeable);
 
         Loggeable.configureMessageLevel(logErrorOn, logWarningOn, logMessageOn);
-        logDao.deleteAll();
         Files.deleteIfExists(Paths.get(fileName));
+        logDao.deleteAll();
+        //configureConsole();
 
         //Message
         MessageType messageType = MessageType.MESSAGE;
@@ -123,11 +130,15 @@ public class LogControllerTests {
         writeLog(loggeable, messageType, enableLogToTest);
 
         //Warning
+        logDao.deleteAll();
+        //configureConsole();
         messageType = MessageType.WARNING;
         enableLogToTest = logWarningOn;
         writeLog(loggeable, messageType, enableLogToTest);
 
         //Error
+        logDao.deleteAll();
+        //configureConsole();
         messageType = MessageType.ERROR;
         enableLogToTest = logMessageOn;
         writeLog(loggeable, messageType, enableLogToTest);
@@ -145,6 +156,7 @@ public class LogControllerTests {
         Loggeable.configureMessageLevel(logErrorOn, logWarningOn, logMessageOn);
         logDao.deleteAll();
         Files.deleteIfExists(Paths.get(fileName));
+        //configureConsole();
 
         //Message        
         MessageType messageType = MessageType.MESSAGE;
@@ -153,12 +165,14 @@ public class LogControllerTests {
 
         //Warning
         logDao.deleteAll();
+        //configureConsole();
         messageType = MessageType.WARNING;
         enableLogToTest = logWarningOn;
         writeLog(loggeable, messageType, enableLogToTest);
 
         //Error
         logDao.deleteAll();
+        //configureConsole();
         messageType = MessageType.ERROR;
         enableLogToTest = logErrorOn;
         writeLog(loggeable, messageType, enableLogToTest);
@@ -172,7 +186,8 @@ public class LogControllerTests {
             String assertMessage = "Invalid Notification Log";
             loggeable.logMessage(message, messageType);
             assertTrue(assertMessage, validateFileLog(message, enableLogToTest));
-            assertTrue(assertMessage, validateDatabaseLog(message, idMensage, false));            
+            assertTrue(assertMessage, validateDatabaseLog(message, idMensage, false));
+            //assertTrue(assertMessage, validateConsoleLog(message, false));
             
         } catch (Exception ex) {
             Logger.getLogger(LogControllerTests.class.getName()).log(Level.SEVERE, null, ex);
@@ -189,6 +204,7 @@ public class LogControllerTests {
             loggeable.logMessage(message, messageType);
             assertTrue(assertMessage, validateFileLog(message, enableLogToTest));
             assertTrue(assertMessage, validateDatabaseLog(message, idMensage, enableLogToTest));
+            //assertTrue(assertMessage, validateConsoleLog(message, enableLogToTest));
         } catch (Exception ex) {
             Logger.getLogger(LogControllerTests.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -202,7 +218,13 @@ public class LogControllerTests {
     }
 
     public boolean validateConsoleLog(String msgToFind, boolean logEnable) {
-        String writtenMsg = readFile(fileName);
+        String writtenMsg = null;
+		try {
+			writtenMsg = readConsole();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         boolean contains = writtenMsg != null ? writtenMsg.contains(msgToFind) : false;
         return logEnable ? contains : !logEnable;
     }
@@ -225,10 +247,31 @@ public class LogControllerTests {
         return logEnable ? contains : !contains;
     }
     
-    public void readConsole() {
-    	//logConsoleOut = new Byte
+    public void configureConsole() {
+    	logConsoleOut = new ByteArrayOutputStream();
+		testLogConsoleHandler = new StreamHandler(logConsoleOut,new SimpleFormatter());
+    	loggerConsoleTest.addHandler(testLogConsoleHandler);
+    	
     }
-
+    public String readConsole() throws IOException {
+    	try {
+        	testLogConsoleHandler.flush();
+    		String logConsoleStr = logConsoleOut.toString();
+    		
+    	    return logConsoleStr;
+    	} catch (Exception e) {
+    		
+    	    return "";
+    	} finally {
+    		loggerConsoleTest.removeHandler(testLogConsoleHandler);
+    		if(logConsoleOut != null) {
+    			logConsoleOut.close();
+    		}
+    		testLogConsoleHandler.close();
+    	}
+    	
+    }
+    
     public String readFile(String file) {
         try (FileReader reader = new FileReader(file);
                 BufferedReader br = new BufferedReader(reader)) {

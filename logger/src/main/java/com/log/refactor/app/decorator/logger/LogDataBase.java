@@ -2,7 +2,6 @@ package com.log.refactor.app.decorator.logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
 
 import com.log.refactor.app.decorator.LogDecorator;
 import com.log.refactor.app.decorator.Loggeable;
@@ -10,7 +9,7 @@ import com.log.refactor.app.models.dao.ILogDao;
 import com.log.refactor.app.models.entity.Log;
 import com.log.refactor.app.util.MessageType;
 
-@Controller
+
 public class LogDataBase extends LogDecorator {
 	@Autowired
 	@Qualifier("delegate")
@@ -31,7 +30,7 @@ public class LogDataBase extends LogDecorator {
 		loggeable.logMessage(messageText, messageType);
 
 		Log log = new Log();
-		log.setMessage(messageText);
+		log.setMessage(message);
 		log.setIdLevel(messageType.getdBTypeId());
 
 		if (message != null) {

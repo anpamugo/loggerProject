@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.log.refactor.app.decorator.LogWriter;
 import com.log.refactor.app.decorator.Loggeable;
 import com.log.refactor.app.decorator.logger.LogConsole;
 import com.log.refactor.app.decorator.logger.LogDataBase;
@@ -22,7 +23,7 @@ public class LogController {
 	@Autowired
 	private ILogDao logDao;
 	
-	@Autowired
+	
 	private Loggeable loggeable;
 
 	@RequestMapping(value = "/listar", method = RequestMethod.GET)
@@ -64,7 +65,7 @@ public class LogController {
 	}
 
 	public Loggeable createLogs(LogForm logForm) {
-		//Loggeable loggeable = new LogWriter();
+		loggeable = new LogWriter();
 
 		if (logForm.getLogConsole()) {
 			loggeable = new LogConsole(loggeable);

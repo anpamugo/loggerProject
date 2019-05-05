@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class LogFile extends LogDecorator {
 	@Autowired
 	@Qualifier("delegate")
@@ -27,10 +27,10 @@ public class LogFile extends LogDecorator {
 	
 	@Autowired
     public LogFile(Loggeable loggeable) {
-    	this.loggeable = loggeable;
-        logger.setUseParentHandlers(false);
+    	this.loggeable = loggeable;        
         this.fileName = "C:\\temp\\pr\\logFileRefactor.txt";
 		this.appendFile = true;
+		logger.setUseParentHandlers(false);
     }
 	
 	private StreamHandler getHandler() {

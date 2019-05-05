@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-@Component
 public class LogConsole extends LogDecorator {
 
     private StreamHandler handler;
@@ -27,13 +26,13 @@ public class LogConsole extends LogDecorator {
     }
 
     private StreamHandler getHandler() {
-        if (this.handler == null) {
+        //if (this.handler == null) {
             try {
                 this.handler = new ConsoleHandler();                
             } catch (SecurityException ex) {
                 Logger.getLogger(LogConsole.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        //}
         return handler;
     }
 
@@ -46,8 +45,8 @@ public class LogConsole extends LogDecorator {
             logger.log(level, message);
             handler.flush();
         }
-        handler.close();
         logger.removeHandler(handler);
+        handler.close();        
     }
 
 }
